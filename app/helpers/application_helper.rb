@@ -10,4 +10,9 @@ module ApplicationHelper
 	end
     end
 
+#есть предопределенная функция content_tag, которая работает)))
+    def cnt_tag(tag,content,options={color:'red'})
+	opt= options.any? ? options.to_s.gsub(/[{}>,:]/,' ') : ' '
+	return "<#{tag} #{opt}>#{content}</#{tag}>"
+    end
 end
