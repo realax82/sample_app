@@ -1,0 +1,25 @@
+<%#exst=if(!User.find_by(id: @user.id))%>
+<%newrec=if(@user.new_record?)%>
+<%	b_caption='Create my account'%>
+<%else%>
+<%	b_caption='Save changes'%>
+<%end%>
+<br>
+<h2>{<%=newrec%>}</h2>
+	<%=form_for(@user) {|f|%>
+	    <%=render('shared/error_messages')%>
+	    
+	    <%=f.label(:name)%>
+	    <%=f.text_field(:name)%>
+	    
+	    <%=f.label(:email)%>
+	    <%=f.text_field(:email)%>
+	    
+	    <%=f.label(:password)%>
+	    <%=f.password_field(:password)%>
+	    
+	    <%=f.label(:password_confirmaton,'Confirm Password')%>
+	    <%=f.password_field(:password_confirmation)%>
+	    <br>
+	    <%=f.submit(b_caption ,class: 'btn btn-large btn-primary')%>
+	<%}%>
