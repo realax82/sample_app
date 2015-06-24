@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+    has_many :microposts,dependent: :destroy
+
     VALID_EMAIL_REGEX=/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]{2,3}\z/i
 
     before_create(:create_remember_token)
@@ -22,6 +24,10 @@ class User < ActiveRecord::Base
 	Digest::SHA1.hexdigest(token.to_s) #to_s нужен для того, чтобы обрабатывать nil-значения
     end
     
+    def feed
+	Micropost.where('user_id=?',id)
+    end
+
     private
 	def create_remember_token
 	    self.remember_token=User.encrypt(User.new_remember_token)

@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
     before_action(:signed_in_user,only:[:index,:edit,:update])
     before_action(:correct_user,only:[:edit,:update])
-    before_action(:admin_user,only:[destroy])
+    before_action(:admin_user,only:[:destroy])
+    before_action(lambda{redirect_to(root_url) if(signed_in?)},only:[:new,:create])
 
 
     def index
@@ -26,6 +27,7 @@ class UsersController < ApplicationController
     
     def show
 	@user=User.find(params[:id])
+	@microposts=@user.microposts.paginate(page: params[:page])
     end
     
     def edit
@@ -49,30 +51,23 @@ class UsersController < ApplicationController
     def destroy
 	User.find(params[:id]).destroy
 	flash[:success]='User deleted.'
-	redirected_to(users_ur)
+	redirected_to(users_url)
     end
 
     private
+#Параметры пользователя, доступные для редактирования через веб
     def user_params
 	params.require(:user).permit(:name,:email,:password,:password_confirmation)
     end
     
     #Before filters
-    
-    def signed_in_user
-	if(!signed_in?)
-	    store_location
-	    redirect_to(signin_url,notice:'Please sign in.')
-	end
-    end
-    
     def correct_user
 	@user=User.find(params[:id])
 	redirect_to(root_url) if(!current_user?(@user))
     end
     
     def admin_user
-	redirect_to(root_url) if(!current_user.admin?)
+	redirect_to(root_url) if((!current_user.admin?)||(current_user==@user))
     end
 
 end
